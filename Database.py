@@ -51,6 +51,12 @@ class Database:
             cursor.execute(query, params)
             self.connection.commit()
 
+    def authenticate_user(self, login, password):
+        """Проверяет логин и пароль пользователя."""
+        query = "SELECT COUNT(*) FROM Account WHERE Login = %s AND Password = %s;"
+        params = (login, password)
+        return self.execute_query(query, params)
+
     def add_client(self, fullname, phone, login, password, date_registration, date_birth, region_id, coefficient):
         query = "CALL add_new_client(%s, %s, %s, %s, %s, %s, %s, %s);"
         params = (fullname, phone, login, password, date_registration, date_birth, region_id, coefficient)

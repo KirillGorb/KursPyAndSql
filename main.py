@@ -1,7 +1,7 @@
 import shutil
 from datetime import datetime
 
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
 import subprocess
 
@@ -22,8 +22,23 @@ PROCESSED_IMAGES_DIR = 'static/processed_images'
 
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    return render_template('login.html')
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    login = request.form['login']
+    password = request.form['password']
+
+    user = db.authenticate_user(login, password)
+
+    if not user:
+        flash('Login successful!', 'success')
+        return redirect(url_for('home'))
+    else:
+        flash('Invalid login or password', 'danger')
+        return render_template('index.html')
 
 
 @app.route('/upload_page')
