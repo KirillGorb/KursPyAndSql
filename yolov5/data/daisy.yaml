@@ -1,0 +1,4 @@
+train: ../data/daisy/images/train/
+val: ../data/daisy/images/val/
+nc: 2
+names: ['23', '135']
