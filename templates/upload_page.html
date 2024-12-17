@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Flask App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+<h1>Upload an Image for YOLOv5 Processing</h1>
+<a href="/" class="back-button">Вернуться обратно</a>
+<form action="/upload" method="POST" enctype="multipart/form-data">
+    <label class="custom-file-upload">
+        Выберите файл
+        <input type="file" name="image" accept="image/*" required>
+    </label>
+    <input type="submit" value="Upload">
+</form>
+</body>
+</html>

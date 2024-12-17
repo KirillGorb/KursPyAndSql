@@ -1,0 +1,104 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px; /* Добавлен отступ снизу */
+}
+
+h2 {
+    color: #555;
+    margin-top: 20px; /* Добавлен отступ сверху */
+    margin-bottom: 10px; /* Добавлен отступ снизу */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+.back-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    width: 150px;
+}
+
+.back-button:hover {
+    background-color: #45a049;
+}
+
+/* Добавление отступов к другим элементам */
+#processed-image {
+    margin-bottom: 20px; /* Отступ снизу для блока с изображением */
+}
+
+form {
+    margin-top: 20px; /* Отступ сверху для формы загрузки */
+    margin-bottom: 20px; /* Отступ снизу для формы загрузки */
+}
+input[type="file"] {
+    display: none; /* Скрываем стандартное поле выбора файла */
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 10px 15px; /* Отступы для кнопки */
+    border: 1px solid #ddd; /* Рамка вокруг кнопки */
+    border-radius: 5px; /* Закругление углов */
+    background-color: #f8f8f8; /* Цвет фона */
+    color: #333; /* Цвет текста */
+    cursor: pointer; /* Указатель при наведении */
+    width: 100%; /* Ширина кнопки */
+    text-align: center; /* Центрирование текста */
+    box-sizing: border-box; /* Учитываем отступы и рамки в ширине */
+}
+
+.custom-file-upload:hover {
+    background-color: #e7e7e7; /* Цвет кнопки при наведении */
+}
+input[type="submit"] {
+    padding: 10px 15px; /* Добавление отступов к кнопке отправки */
+    background-color: #4CAF50; /* Цвет кнопки */
+    color: white; /* Цвет текста кнопки */
+    border: none; /* Убираем рамку */
+    border-radius: 5px; /* Закругление углов */
+    cursor: pointer; /* Указатель при наведении */
+    width: 100%; /* Ширина кнопки отправки */
+    box-sizing: border-box; /* Учитываем отступы и рамки в ширине */
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049; /* Цвет кнопки при наведении */
+}
