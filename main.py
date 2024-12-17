@@ -20,9 +20,11 @@ db.connect()
 
 PROCESSED_IMAGES_DIR = 'static/processed_images'
 
+
 @app.route('/')
 def home():
     return render_template('login.html')
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -33,14 +35,19 @@ def login():
 
     if user_exists:
         flash('Login successful!', 'success')
+        region_id = db.execute_query("SELECT RegionId FROM Account WHERE Login ILIKE %s;", (login,))
+        session['region_id'] = region_id[0]
+        session['login'] = login
         return redirect(url_for('index'))  # Перенаправляем на главную страницу
     else:
         flash('Invalid login or password', 'danger')
         return redirect(url_for('home'))  # Перенаправляем обратно на страницу входа
 
+
 @app.route('/index')
 def index():
     return render_template('index.html')
+
 
 @app.route('/upload_page')
 def upload_page():
@@ -216,7 +223,37 @@ def upload_image():
     else:
         processed_image_path = None
 
-    return render_template('upload.html', processed_image=processed_image_path)
+    return render_template('upload.html', processed_image=processed_image_path,
+                           car_id=db.get_cars(session.get('region_id'))[0])
+
+
+@app.route('/form_car/<car>', methods=['GET', 'POST'])
+def form_car(car):
+    admins = db.get_table_form("employee_shop")
+    shops = db.get_table_form("ShopCars")
+
+    if request.method == 'POST':
+        admin_id = request.form['adminId']
+        shop_id = request.form['shopId']
+        car_id = car[1]
+        login = session.get('login')
+        if not login:
+            return "Ошибка: Необходимо войти в систему."
+
+        client_result = db.execute_query("SELECT Client.Id FROM Client "
+                                         "JOIN Account ON Client.AccountId = Account.Id WHERE Account.Login = %s;",
+                                         (login,))
+
+        if client_result and len(client_result) > 0:
+            client_id = client_result[0][0]
+            print(client_id)
+
+            db.add_doc(client_id, admin_id, car_id, shop_id)
+            return redirect(url_for('view'))
+        else:
+            return client_result
+
+    return render_template('form.html', admins=admins, shops=shops)
 
 
 if __name__ == '__main__':

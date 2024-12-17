@@ -11,9 +11,10 @@
 <div id="processed-image">
     <h2>Processed Image:</h2>
     {% if processed_image %}
-        <img src="{{ processed_image }}" alt="Processed Image">
+    <img src="{{ processed_image }}" alt="Processed Image">
+    <a href="{{ url_for('form_car', car=car_id) }}" class="back-button">Купить</a>
     {% else %}
-        <p>No image processed.</p>
+    <p>No image processed.</p>
     {% endif %}
 </div>
 </body>

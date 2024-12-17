@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Форма заявки</title>
+</head>
+<body>
+    <h1>Заполните заявку</h1>
+    <form method="POST">
+        <label for="adminId">Выберите администратора:</label>
+        <select id="adminId" name="adminId" required>
+            <option value="">Выберите администратора</option>
+            {% for admin in admins %}
+            <option value="{{ admin.id }}">{{ admin.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="shopId">Выберите магазин:</label>
+        <select id="shopId" name="shopId" required>
+            <option value="">Выберите магазин</option>
+            {% for shop in shops %}
+            <option value="{{ shop.id }}">{{ shop.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit">Отправить заявку</button>
+    </form>
+</body>
+</html>

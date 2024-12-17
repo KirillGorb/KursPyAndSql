@@ -57,6 +57,18 @@ class Database:
         params = (login, password)
         result = self.execute_query(query, params)
         return result[0][0]  # Возвращаем результат триггера (true/false)
+
+    def get_cars(self, reg_id):
+        """Проверяет  с использованием триггера."""
+        query = "SELECT car_id FROM get_car_info(%s);"
+        result = self.execute_query(query, reg_id)
+        return result
+
+    def add_doc(self, client, admin, car, shop):
+        query = " CALL create_purchase_agreement(%s, %s, %s, %s);"
+        params = (client, admin, car, shop)
+        self.execute_query_nores(query, params)
+
     def add_client(self, fullname, phone, login, password, date_registration, date_birth, region_id, coefficient):
         query = "CALL add_new_client(%s, %s, %s, %s, %s, %s, %s, %s);"
         params = (fullname, phone, login, password, date_registration, date_birth, region_id, coefficient)
