@@ -41,47 +41,37 @@ class Database:
             self.connection.commit()
             return cursor.fetchall()
 
+    def execute_query_nores(self, query, params=None):
+        """Executes an SQL query that does not return results."""
+        if self.connection is None:
+            print("Соединение не установлено")
+            return None
+
+        with self.connection.cursor() as cursor:
+            cursor.execute(query, params)
+            self.connection.commit()
+
     def register_user(self, full_name, phone, login, password, date_birth, region_id):
-        """Регистрирует нового пользователя в базе данных."""
+        """Registers a new user in the database."""
         date_registration = datetime.now().date()
 
         query = "INSERT INTO account (fullname, phone, login, password, dateregistration, datebirth, regionid) " \
                 "VALUES (%s, %s, %s, %s, %s, %s, %s);"
         params = (full_name, phone, login, password, date_registration, date_birth, region_id)
+        self.execute_query_nores(query, params)
 
-        try:
-            self.execute_query(query, params)
-        except psycopg2.errors.UniqueViolation:
-            raise ValueError("Этот логин уже занят.")
-        except Exception as e:
-            self.connection.rollback()
-            raise e
 
     def get_tables(self):
-        try:
-            tables = self.execute_query("SELECT table_name FROM information_schema.tables WHERE table_schema='public';")
-            return [table[0] for table in tables]
-
-        except Exception as error:
-            print("Error while connecting to PostgreSQL", error)
-            return []
+        tables = self.execute_query("SELECT table_name FROM information_schema.tables WHERE table_schema='public';")
+        return [table[0] for table in tables]
 
     def get_table_data(self, table_name):
-        try:
-            data = self.execute_query(f"SELECT * FROM {table_name};")
-            return data
-
-        except Exception as error:
-            print(f"Error while fetching data from table {table_name}: {error}")
-            return []
+        data = self.execute_query(f"SELECT * FROM {table_name};")
+        return data
 
     def get_regions(self):
-        try:
-            query = "SELECT id, region_name FROM region;"
-            return [{'id': region[0], 'name': region[1]} for region in self.execute_query(query)]
-        except Exception as error:
-            print("Error while connecting to PostgreSQL", error)
-            return []
+        query = "SELECT id, region_name FROM region;"
+        return [{'id': region[0], 'name': region[1]} for region in self.execute_query(query)]
 
     def paginate(self, table_name, page, page_size):
         """Пагинация данных из таблицы."""

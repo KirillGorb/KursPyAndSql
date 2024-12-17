@@ -1,12 +1,13 @@
 import shutil
 
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, session
 import os
 import subprocess
 
 from Database import Database
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'
 
 host = "localhost"
 port = "5432"
@@ -50,17 +51,54 @@ def register():
         date_birth = request.form['dateBirth']
         region_id = request.form['regionId']
 
-        try:
-            db.register_user(full_name, phone, login, password, date_birth, region_id)
-            return redirect(url_for('view'))
-        except ValueError as e:
-            return render_template('register.html', regions=db.get_regions(), error=str(e))
-        except Exception as e:
-            return render_template('register.html', regions=db.get_regions(), error="Произошла ошибка. Попробуйте снова.")
+        account_id = db.register_user(full_name, phone, login, password, date_birth, region_id)
+        session['account_id'] = account_id
+        return redirect(url_for('select_user_type'))
 
     regions = db.get_regions()
     return render_template('register.html', regions=regions)
 
+
+@app.route('/select_user_type', methods=['GET', 'POST'])
+def select_user_type():
+    if request.method == 'POST':
+        user_type = request.form['userType']
+        if user_type == 'client':
+            return redirect(url_for('register_client'))
+        elif user_type == 'admin':
+            return redirect(url_for('register_admin'))
+
+    return render_template('select_user_type.html')
+
+
+@app.route('/register_client', methods=['GET', 'POST'])
+def register_client():
+    account_id = session.get('account_id')  # Получаем ID аккаунта из сессии
+    if request.method == 'POST':
+        coefficient = request.form['coefficient']
+
+        try:
+            db.add_client(account_id, coefficient)
+            return redirect(url_for('view'))
+        except Exception as e:
+            return render_template('register_client.html', error="Произошла ошибка. Попробуйте снова.")
+
+    return render_template('register_client.html')
+
+@app.route('/register_admin', methods=['GET', 'POST'])
+def register_admin():
+    account_id = session.get('account_id')  # Получаем ID аккаунта из сессии
+    if request.method == 'POST':
+        position_id = request.form['positionId']
+        shop_id = request.form['shopId']
+
+        try:
+            db.add_admin(account_id, position_id, shop_id)
+            return redirect(url_for('view'))
+        except Exception as e:
+            return render_template('register_admin.html', error="Произошла ошибка. Попробуйте снова.")
+
+    return render_template('register_admin.html')
 
 @app.route('/upload', methods=['POST'])
 def upload_image():

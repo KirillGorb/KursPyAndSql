@@ -52,7 +52,7 @@ tr:hover {
     text-align: center;
     text-decoration: none;
     border-radius: 5px;
-    width: 150px;
+    width: 175px;
 }
 
 .back-button:hover {
@@ -108,6 +108,23 @@ label {
     margin-bottom: 5px;
     font-weight: bold;
     color: #555;
+}
+a {
+    display: inline-block; /* Позволяет использовать отступы и размеры */
+    padding: 10px 15px; /* Добавление отступов */
+    background-color: #4CAF50; /* Цвет фона */
+    color: white; /* Цвет текста */
+    text-decoration: none; /* Убираем подчеркивание */
+    border: none; /* Убираем рамку */
+    border-radius: 5px; /* Закругление углов */
+    cursor: pointer; /* Указатель при наведении */
+    width: 100%; /* Ширина ссылки */
+    box-sizing: border-box; /* Учитываем отступы и рамки в ширине */
+    text-align: center; /* Центрируем текст */
+}
+
+a:hover {
+    background-color: #45a049; /* Цвет фона при наведении */
 }
 
 input[type="text"],

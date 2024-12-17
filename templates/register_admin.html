@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <h1>Admin Registration Form</h1>
+    <p>Please fill out the form below to register as an admin.</p>
+    <form method="post" action="/register-admin">
+        <fieldset>
+            <legend>Admin Information</legend>
+
+            <label for="admin-name">Admin Name:</label>
+            <input id="admin-name" name="admin-name" type="text" required>
+
+            <label for="admin-id">Admin ID:</label>
+            <input id="admin-id" name="admin-id" type="text" required>
+
+            <label for="account-id">Account ID:</label>
+            <input id="account-id" name="account-id" type="text" required>
+
+            <label for="position-id">Position ID:</label>
+            <input id="position-id" name="position-id" type="text" required>
+
+            <label for="shop-id">Shop ID:</label>
+            <input id="shop-id" name="shop-id" type="text" required>
+        </fieldset>
+
+        <input type="submit" value="Register Admin">
+    </form>
+</body>
+</html>
