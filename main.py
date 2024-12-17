@@ -1,6 +1,6 @@
 import shutil
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for, flash
 import os
 import subprocess
 
@@ -8,7 +8,7 @@ from Database import Database
 
 app = Flask(__name__)
 
-host = "localhost"  # или IP-адрес вашего сервера
+host = "localhost"
 port = "5432"
 database = "car_dealership"
 user = "postgres"
@@ -24,6 +24,44 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/upload_page')
+def upload_page():
+    return render_template('upload_page.html')
+
+
+@app.route('/view')
+def view():
+    tables = db.get_tables()
+    table_data = {}
+
+    for table in tables:
+        table_data[table] = db.get_table_data(table)
+
+    return render_template('viewDataBase.html', table_data=table_data)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        full_name = request.form['fullName']
+        phone = request.form['phone']
+        login = request.form['login']
+        password = request.form['password']
+        date_birth = request.form['dateBirth']
+        region_id = request.form['regionId']
+
+        try:
+            db.register_user(full_name, phone, login, password, date_birth, region_id)
+            return redirect(url_for('view'))
+        except ValueError as e:
+            return render_template('register.html', regions=db.get_regions(), error=str(e))
+        except Exception as e:
+            return render_template('register.html', regions=db.get_regions(), error="Произошла ошибка. Попробуйте снова.")
+
+    regions = db.get_regions()
+    return render_template('register.html', regions=regions)
+
+
 @app.route('/upload', methods=['POST'])
 def upload_image():
     if 'image' not in request.files:
@@ -37,8 +75,8 @@ def upload_image():
     file.save(input_image_path)
 
     command = [
-        os.path.join('venv', 'Scripts', 'python.exe'),  # Используем Python из виртуального окружения
-        'yolov5/detect.py',
+        os.path.join('venv', 'Scripts', 'python.exe'),  # Python from the virtual environment
+        os.path.abspath('yolov5/detect.py'),  # Absolute path to detect.py
         '--source', input_image_path,
         '--weights', 'yolov5/runs/train/exp7/weights/best.pt',
         '--conf', '0.5',
@@ -65,22 +103,6 @@ def upload_image():
         processed_image_path = None
 
     return render_template('upload.html', processed_image=processed_image_path)
-
-
-@app.route('/upload_page')
-def upload_page():
-    return render_template('upload_page.html')
-
-
-@app.route('/view')
-def view():
-    tables = db.get_tables()
-    table_data = {}
-
-    for table in tables:
-        table_data[table] = db.get_table_data(table)
-
-    return render_template('viewDataBase.html', table_data=table_data)
 
 
 if __name__ == '__main__':

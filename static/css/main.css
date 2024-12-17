@@ -102,3 +102,72 @@ input[type="submit"] {
 input[type="submit"]:hover {
     background-color: #45a049; /* Цвет кнопки при наведении */
 }
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"],
+input[type="password"]{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+ #regionId {
+    width: 100%; /* Ширина выпадающего списка */
+    padding: 10px; /* Отступы внутри */
+    border: 1px solid #ccc; /* Цвет и стиль границы */
+    border-radius: 5px; /* Закругление углов */
+    font-size: 16px; /* Размер шрифта */
+    background-color: #f9f9f9; /* Цвет фона */
+    cursor: pointer; /* Курсор при наведении */
+    transition: border-color 0.3s; /* Плавный переход для изменения цвета границы */
+}
+
+/* Стили для выпадающего списка при наведении */
+#regionId:hover {
+    border-color: #888; /* Цвет границы при наведении */
+}
+
+/* Стили для выпадающего списка при фокусе */
+#regionId:focus {
+    border-color: #007BFF; /* Цвет границы при фокусе */
+    outline: none; /* Убираем стандартный контур */
+}
+
+/* Стили для опций (не все браузеры поддерживают стилизацию опций) */
+#regionId option {
+    padding: 10px; /* Отступы внутри опций */
+    background-color: #fff; /* Цвет фона опций */
+    color: #333; /* Цвет текста опций */
+}
+
+/* Стили для опций при наведении (не все браузеры поддерживают) */
+#regionId option:hover {
+    background-color: #f0f0f0; /* Цвет фона опции при наведении */
+}
+
+.date-container {
+    display: flex; /* Используем flexbox для выравнивания элементов */
+    align-items: center; /* Выравнивание по центру по вертикали */
+}
+
+#dateBirth {
+    padding: 10px; /* Отступы внутри поля */
+    border: 1px solid #ccc; /* Цвет и стиль границы */
+    border-radius: 5px; /* Закругление углов */
+    font-size: 16px; /* Размер шрифта */
+    flex: 1; /* Позволяет полю даты занимать оставшееся пространство */
+}
+
+/* Стили для метки */
+label {
+    margin-right: 10px; /* Отступ справа для разделения с полем ввода */
+}

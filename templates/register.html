@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Регистрация</title>
+</head>
+<body>
+<a href="/" class="back-button">Вернуться обратно</a>
+<h1>Регистрация нового пользователя</h1>
+<form action="/register" method="post">
+    <label for="fullName">Полное имя:</label>
+    <input type="text" id="fullName" name="fullName" required><br>
+
+    <label for="phone">Телефон:</label>
+    <input type="text" id="phone" name="phone" required><br>
+
+    <label for="login">Логин:</label>
+    <input type="text" id="login" name="login" required><br>
+
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" name="password" required><br>
+
+    <label for="dateBirth">Дата рождения:</label>
+    <div class="date-container">
+        <input type="date" id="dateBirth" name="dateBirth" required>
+    </div>
+
+    <label for="regionId">Регион:</label>
+    <select id="regionId" name="regionId" required>
+        <option value="">Выберите регион</option>
+        {% for region in regions %}
+        <option value="{{ region.id }}">{{ region.name }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <input type="submit" value="Зарегистрироваться">
+</form>
+</body>
+</html>

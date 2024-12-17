@@ -1,4 +1,5 @@
 import psycopg2
+from datetime import datetime
 
 class Database:
     def __init__(self, host, port, database, user, password):
@@ -40,6 +41,23 @@ class Database:
             self.connection.commit()
             return cursor.fetchall()
 
+    def register_user(self, full_name, phone, login, password, date_birth, region_id):
+        """Регистрирует нового пользователя в базе данных."""
+        date_registration = datetime.now().date()
+
+        query = "INSERT INTO account (fullname, phone, login, password, dateregistration, datebirth, regionid) " \
+                "VALUES (%s, %s, %s, %s, %s, %s, %s);"
+        params = (full_name, phone, login, password, date_registration, date_birth, region_id)
+
+        try:
+            self.execute_query(query, params)
+        except psycopg2.errors.UniqueViolation:
+            # Handle the unique violation error
+            raise ValueError("Этот логин уже занят.")
+        except Exception as e:
+            # Rollback the transaction on any other error
+            self.connection.rollback()
+            raise e  # Re-raise the exception for further handling
 
     def get_tables(self):
         try:
@@ -58,4 +76,13 @@ class Database:
 
         except Exception as error:
             print(f"Error while fetching data from table {table_name}: {error}")
+            return []
+
+    def get_regions(self):
+        try:
+            query = "SELECT id, region_name FROM region;"
+            print("Retrieved regions:", query)
+            return [{'id': region[0], 'name': region[1]} for region in self.execute_query(query)]
+        except Exception as error:
+            print("Error while connecting to PostgreSQL", error)
             return []
