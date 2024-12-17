@@ -52,12 +52,10 @@ class Database:
         try:
             self.execute_query(query, params)
         except psycopg2.errors.UniqueViolation:
-            # Handle the unique violation error
             raise ValueError("Этот логин уже занят.")
         except Exception as e:
-            # Rollback the transaction on any other error
             self.connection.rollback()
-            raise e  # Re-raise the exception for further handling
+            raise e
 
     def get_tables(self):
         try:
@@ -67,7 +65,6 @@ class Database:
         except Exception as error:
             print("Error while connecting to PostgreSQL", error)
             return []
-
 
     def get_table_data(self, table_name):
         try:
@@ -81,8 +78,34 @@ class Database:
     def get_regions(self):
         try:
             query = "SELECT id, region_name FROM region;"
-            print("Retrieved regions:", query)
             return [{'id': region[0], 'name': region[1]} for region in self.execute_query(query)]
         except Exception as error:
             print("Error while connecting to PostgreSQL", error)
             return []
+
+    def paginate(self, table_name, page, page_size):
+        """Пагинация данных из таблицы."""
+        offset = (page - 1) * page_size
+        query = f"SELECT * FROM {table_name} LIMIT %s OFFSET %s;"
+        return self.execute_query(query, (page_size, offset))
+
+    def sort_data(self, table_name, sort_column, ascending=True):
+        """Сортировка данных из таблицы."""
+        order = "ASC" if ascending else "DESC"
+        query = f"SELECT * FROM {table_name} ORDER BY {sort_column} {order};"
+        return self.execute_query(query)
+
+    def filter_data(self, table_name, filter_column, filter_value):
+        """Фильтрация данных из таблицы."""
+        query = f"SELECT * FROM {table_name} WHERE {filter_column} = %s;"
+        return self.execute_query(query, (filter_value,))
+
+    def aggregate_data(self, table_name, aggregate_function, column_name):
+        """Агрегация данных из таблицы."""
+        query = f"SELECT {aggregate_function}({column_name}) FROM {table_name};"
+        return self.execute_query(query)
+
+    def join_tables(self, table1, table2, join_column):
+        """Объединение двух таблиц."""
+        query = f"SELECT * FROM {table1} INNER JOIN {table2} ON {table1}.{join_column} = {table2}.{join_column};"
+        return self.execute_query(query)
