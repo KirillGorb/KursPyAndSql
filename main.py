@@ -20,31 +20,27 @@ db.connect()
 
 PROCESSED_IMAGES_DIR = 'static/processed_images'
 
-
 @app.route('/')
 def home():
     return render_template('login.html')
-
 
 @app.route('/login', methods=['POST'])
 def login():
     login = request.form['login']
     password = request.form['password']
 
-    user = db.authenticate_user(login, password)
+    user_exists = db.authenticate_user(login, password)
 
-    if not user:
+    if user_exists:
         flash('Login successful!', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))  # Перенаправляем на главную страницу
     else:
         flash('Invalid login or password', 'danger')
-        return redirect(url_for('index'))
-
+        return redirect(url_for('home'))  # Перенаправляем обратно на страницу входа
 
 @app.route('/index')
 def index():
     return render_template('index.html')
-
 
 @app.route('/upload_page')
 def upload_page():
