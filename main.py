@@ -35,10 +35,15 @@ def login():
 
     if not user:
         flash('Login successful!', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     else:
         flash('Invalid login or password', 'danger')
-        return render_template('index.html')
+        return redirect(url_for('index'))
+
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
 
 
 @app.route('/upload_page')
@@ -52,9 +57,44 @@ def view():
     table_data = {}
 
     for table in tables:
-        table_data[table] = db.get_table_data(table)
-
+        table_data[table] = {
+            'data': db.get_table_data(table),
+            'columns': db.get_column_names(table)  # Получаем имена столбцов
+        }
     return render_template('viewDataBase.html', table_data=table_data)
+
+
+@app.route('/table/<table_name>', methods=['GET', 'POST'])
+def table_data(table_name):
+    if request.method == 'POST':
+        # Обработка POST-запросов для различных операций
+        action = request.form.get('action')
+        if action == 'paginate':
+            page = int(request.form.get('page', 1))
+            page_size = int(request.form.get('page_size', 10))
+            data = db.paginate(table_name, page, page_size)
+        elif action == 'sort':
+            sort_column = request.form.get('sort_column')
+            ascending = request.form.get('ascending') == 'true'
+            data = db.sort_data(table_name, sort_column, ascending)
+        elif action == 'filter':
+            filter_column = request.form.get('filter_column')
+            filter_value = request.form.get('filter_value')
+            data = db.filter_data(table_name, filter_column, filter_value)
+        elif action == 'aggregate':
+            aggregate_function = request.form.get('aggregate_function')
+            column_name = request.form.get('column_name')
+            data = db.aggregate_data(table_name, aggregate_function, column_name)
+        elif action == 'join':
+            table2 = request.form.get('table2')
+            join_column = request.form.get('join_column')
+            data = db.join_tables(table_name, table2, join_column)
+        else:
+            data = db.get_table_data(table_name)
+    else:
+        data = db.get_table_data(table_name)
+
+    return render_template('table_data.html', table_name=table_name, data=data, columns=db.get_column_names(table_name))
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -114,6 +154,7 @@ def register_client():
 
     return render_template('register_client.html')
 
+
 @app.route('/register-admin', methods=['GET', 'POST'])
 def register_seller():
     if request.method == 'POST':
@@ -137,6 +178,7 @@ def register_seller():
     positions = db.get_table_form("Positions")
     shops = db.get_table_form("ShopCars")
     return render_template('register_admin.html', positions=positions, shops=shops)
+
 
 @app.route('/upload', methods=['POST'])
 def upload_image():

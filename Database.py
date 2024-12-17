@@ -69,6 +69,10 @@ class Database:
         params = (fullname, phone, login, password, date_registration, date_birth, region_id, position_id, shop_id)
         self.execute_query_nores(query, params)
 
+    def get_column_names(self, table_name):
+        query = f"SELECT column_name FROM information_schema.columns WHERE table_name='{table_name}';"
+        return [column[0] for column in self.execute_query(query)]
+
     def get_tables(self):
         tables = self.execute_query("SELECT table_name FROM information_schema.tables WHERE table_schema='public';")
         return [table[0] for table in tables]
@@ -100,7 +104,12 @@ class Database:
 
     def aggregate_data(self, table_name, aggregate_function, column_name):
         """Агрегация данных из таблицы."""
-        query = f"SELECT {aggregate_function}({column_name}) FROM {table_name};"
+        # Приведение типов для SUM и AVG
+        if aggregate_function in ['SUM', 'AVG']:
+            query = f"SELECT {aggregate_function}(CAST({column_name} AS numeric)) FROM {table_name};"
+        else:
+            query = f"SELECT {aggregate_function}({column_name}) FROM {table_name};"
+
         return self.execute_query(query)
 
     def join_tables(self, table1, table2, join_column):

@@ -7,20 +7,21 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
-<a href="/" class="back-button">Вернуться обратно</a>
+<a href="/index" class="back-button">Вернуться обратно</a>
 <h1>Данные из таблиц в базе данных</h1>
+
 {% for table, data in table_data.items() %}
-<h2>Таблица: {{ table }}</h2>
+<a href="{{ url_for('table_data', table_name=table) }}" class="table-link">{{ table }}</a>
 <table>
     <thead>
     <tr>
-        {% for column in data[0] %}
+        {% for column in data.columns %}
         <th>{{ column }}</th>
         {% endfor %}
     </tr>
     </thead>
     <tbody>
-    {% for row in data %}
+    {% for row in data.data %}
     <tr>
         {% for item in row %}
         <td>{{ item }}</td>

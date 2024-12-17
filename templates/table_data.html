@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Данные таблицы: {{ table_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+<a href="/index" class="back-button">Вернуться обратно</a>
+<div class="container">
+    <h1>Данные таблицы: {{ table_name }}</h1>
+
+    <h2>Данные:</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            {% for column in columns %}
+            <th>{{ column }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in data %}
+        <tr>
+            {% for item in row %}
+            <td>{{ item }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Операции с таблицей:</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="action">Выберите действие:</label>
+            <select name="action" id="action" class="form-control">
+                <option value="paginate">Пагинация</option>
+                <option value="sort">Сортировка</option>
+                <option value="filter">Фильтрация</option>
+                <option value="aggregate">Агрегация</option>
+                <option value="join">Объединение</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="page">Страница (для пагинации):</label>
+            <input type="number" name="page" id="page" class="form-control" value="1">
+        </div>
+        <div class="form-group">
+            <label for="page_size">Размер страницы (для пагинации):</label>
+            <input type="number" name="page_size" id="page_size" class="form-control" value="10">
+        </div>
+        <div class="form-group">
+            <label for="sort_column">Столбец для сортировки:</label>
+            <input type="text" name="sort_column" id="sort_column" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="ascending">По возрастанию:</label>
+            <select name="ascending" id="ascending" class="form-control">
+                <option value="true">Да</option>
+                <option value="false">Нет</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="filter_column">Столбец для фильтрации:</label>
+            <input type="text" name="filter_column" id="filter_column" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="filter_value">Значение для фильтрации:</label>
+            <input type="text" name="filter_value" id="filter_value" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="aggregate_function">Тип агрегации:</label>
+            <select name="aggregate_function" id="aggregate_function" class="form-control">
+                <option value="SUM">SUM</option>
+                <option value="AVG">AVG</option>
+                <option value="COUNT">COUNT</option>
+                <option value="MAX">MAX</option>
+                <option value="MIN">MIN</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="column_name">Столбец для агрегации:</label>
+            <input type="text" name="column_name" id="column_name" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="table2">Имя второй таблицы (для объединения):</label>
+            <input type="text" name="table2" id="table2" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="join_column">Столбец для объединения:</label>
+            <input type="text" name="join_column" id="join_column" class="form-control">
+        </div>
+        <input type="submit" value="Выполнить">
+    </form>
+</div>
+</body>
+</html>
