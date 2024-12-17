@@ -1,4 +1,5 @@
 import shutil
+from datetime import datetime
 
 from flask import Flask, render_template, request, redirect, url_for, session
 import os
@@ -50,12 +51,22 @@ def register():
         password = request.form['password']
         date_birth = request.form['dateBirth']
         region_id = request.form['regionId']
+        date_registration = datetime.now().date()  # Assuming you want to set the current date
 
-        account_id = db.register_user(full_name, phone, login, password, date_birth, region_id)
-        session['account_id'] = account_id
+        # Store the user data in the session
+        session['user_data'] = {
+            'full_name': full_name,
+            'phone': phone,
+            'login': login,
+            'password': password,
+            'date_registration': date_registration,
+            'date_birth': date_birth,
+            'region_id': region_id
+        }
+
         return redirect(url_for('select_user_type'))
 
-    regions = db.get_regions()
+    regions = db.get_table_form("region")
     return render_template('register.html', regions=regions)
 
 
@@ -63,42 +74,54 @@ def register():
 def select_user_type():
     if request.method == 'POST':
         user_type = request.form['userType']
-        if user_type == 'client':
-            return redirect(url_for('register_client'))
-        elif user_type == 'admin':
-            return redirect(url_for('register_admin'))
+        return redirect(url_for('register_client' if user_type == 'client' else 'register_admin'))
 
     return render_template('select_user_type.html')
 
 
 @app.route('/register_client', methods=['GET', 'POST'])
 def register_client():
-    account_id = session.get('account_id')  # Получаем ID аккаунта из сессии
     if request.method == 'POST':
         coefficient = request.form['coefficient']
+        user_data = session.get('user_data')
 
-        try:
-            db.add_client(account_id, coefficient)
-            return redirect(url_for('view'))
-        except Exception as e:
-            return render_template('register_client.html', error="Произошла ошибка. Попробуйте снова.")
+        db.add_client(
+            user_data['full_name'],
+            user_data['phone'],
+            user_data['login'],
+            user_data['password'],
+            user_data['date_registration'],
+            user_data['date_birth'],
+            user_data['region_id'],
+            coefficient
+        )
+        return redirect(url_for('view'))
 
     return render_template('register_client.html')
 
-@app.route('/register_admin', methods=['GET', 'POST'])
-def register_admin():
-    account_id = session.get('account_id')  # Получаем ID аккаунта из сессии
+@app.route('/register-admin', methods=['GET', 'POST'])
+def register_seller():
     if request.method == 'POST':
-        position_id = request.form['positionId']
-        shop_id = request.form['shopId']
+        position_id = request.form['position_id']
+        shop_id = request.form['shop_id']
+        user_data = session.get('user_data')
 
-        try:
-            db.add_admin(account_id, position_id, shop_id)
-            return redirect(url_for('view'))
-        except Exception as e:
-            return render_template('register_admin.html', error="Произошла ошибка. Попробуйте снова.")
+        db.add_seller(
+            user_data['full_name'],
+            user_data['phone'],
+            user_data['login'],
+            user_data['password'],
+            user_data['date_registration'],
+            user_data['date_birth'],
+            user_data['region_id'],
+            position_id,
+            shop_id
+        )
+        return redirect(url_for('view'))
 
-    return render_template('register_admin.html')
+    positions = db.get_table_form("Positions")
+    shops = db.get_table_form("ShopCars")
+    return render_template('register_admin.html', positions=positions, shops=shops)
 
 @app.route('/upload', methods=['POST'])
 def upload_image():
@@ -144,9 +167,5 @@ def upload_image():
 
 
 if __name__ == '__main__':
-    try:
-        app.run(debug=True)
-    except Exception as e:
-        print(f"Ошибка при выполнении запроса: {e}")
-
+    app.run(debug=True)
     db.close()

@@ -1,5 +1,5 @@
 import psycopg2
-from datetime import datetime
+
 
 class Database:
     def __init__(self, host, port, database, user, password):
@@ -51,15 +51,17 @@ class Database:
             cursor.execute(query, params)
             self.connection.commit()
 
-    def register_user(self, full_name, phone, login, password, date_birth, region_id):
-        """Registers a new user in the database."""
-        date_registration = datetime.now().date()
-
-        query = "INSERT INTO account (fullname, phone, login, password, dateregistration, datebirth, regionid) " \
-                "VALUES (%s, %s, %s, %s, %s, %s, %s);"
-        params = (full_name, phone, login, password, date_registration, date_birth, region_id)
+    def add_client(self, fullname, phone, login, password, date_registration, date_birth, region_id, coefficient):
+        query = "CALL add_new_client(%s, %s, %s, %s, %s, %s, %s, %s);"
+        params = (fullname, phone, login, password, date_registration, date_birth, region_id, coefficient)
         self.execute_query_nores(query, params)
 
+    def add_seller(self, fullname, phone, login, password, date_registration, date_birth, region_id, position_id,
+                   shop_id):
+
+        query = "SELECT create_employee_shop(%s, %s, %s, %s, %s, %s, %s, %s, %s);"
+        params = (fullname, phone, login, password, date_registration, date_birth, region_id, position_id, shop_id)
+        self.execute_query_nores(query, params)
 
     def get_tables(self):
         tables = self.execute_query("SELECT table_name FROM information_schema.tables WHERE table_schema='public';")
@@ -69,8 +71,8 @@ class Database:
         data = self.execute_query(f"SELECT * FROM {table_name};")
         return data
 
-    def get_regions(self):
-        query = "SELECT id, region_name FROM region;"
+    def get_table_form(self, table_name):
+        query = f"SELECT * FROM {table_name};"
         return [{'id': region[0], 'name': region[1]} for region in self.execute_query(query)]
 
     def paginate(self, table_name, page, page_size):

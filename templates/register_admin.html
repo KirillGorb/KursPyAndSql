@@ -7,29 +7,30 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
-    <h1>Admin Registration Form</h1>
-    <p>Please fill out the form below to register as an admin.</p>
-    <form method="post" action="/register-admin">
-        <fieldset>
-            <legend>Admin Information</legend>
+<h1>Admin Registration Form</h1>
+<p>Please fill out the form below to register as an admin.</p>
+<form method="post" action="/register-admin">
+    <fieldset>
+        <legend>Admin Information</legend>
 
-            <label for="admin-name">Admin Name:</label>
-            <input id="admin-name" name="admin-name" type="text" required>
+        <label for="position_id">Position ID:</label>
+        <select id="position_id" name="position_id" required>
+            <option value="">Выберите позицию</option>
+            {% for region in positions %}
+            <option value="{{ region.id }}">{{ region.name }}</option>
+            {% endfor %}
+        </select><br><br>
 
-            <label for="admin-id">Admin ID:</label>
-            <input id="admin-id" name="admin-id" type="text" required>
+        <label for="shop_id">Shop ID:</label>
+        <select id="shop_id" name="shop_id" required>
+            <option value="">Выберите магазин</option>
+            {% for region in shops %}
+            <option value="{{ region.id }}">{{ region.name }}</option>
+            {% endfor %}
+        </select><br><br>
+    </fieldset>
 
-            <label for="account-id">Account ID:</label>
-            <input id="account-id" name="account-id" type="text" required>
-
-            <label for="position-id">Position ID:</label>
-            <input id="position-id" name="position-id" type="text" required>
-
-            <label for="shop-id">Shop ID:</label>
-            <input id="shop-id" name="shop-id" type="text" required>
-        </fieldset>
-
-        <input type="submit" value="Register Admin">
-    </form>
+    <input type="submit">
+</form>
 </body>
 </html>
