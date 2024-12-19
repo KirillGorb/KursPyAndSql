@@ -88,10 +88,6 @@ def table_data(table_name):
             aggregate_function = request.form.get('aggregate_function')
             column_name = request.form.get('column_name')
             data = db.aggregate_data(table_name, aggregate_function, column_name)
-        elif action == 'join':
-            table2 = request.form.get('table2')
-            join_column = request.form.get('join_column')
-            data = db.join_tables(table_name, table2, join_column)
         else:
             data = db.get_table_data(table_name)
     else:

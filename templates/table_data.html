@@ -40,7 +40,6 @@
                 <option value="sort">Сортировка</option>
                 <option value="filter">Фильтрация</option>
                 <option value="aggregate">Агрегация</option>
-                <option value="join">Объединение</option>
             </select>
         </div>
         <div class="form-group">
@@ -53,7 +52,11 @@
         </div>
         <div class="form-group">
             <label for="sort_column">Столбец для сортировки:</label>
-            <input type="text" name="sort_column" id="sort_column" class="form-control">
+            <select name="sort_column" id="sort_column" class="form-control">
+                {% for column in columns %}
+                <option value="{{ column }}">{{ column }}</option>
+                {% endfor %}
+            </select>
         </div>
         <div class="form-group">
             <label for="ascending">По возрастанию:</label>
@@ -64,7 +67,11 @@
         </div>
         <div class="form-group">
             <label for="filter_column">Столбец для фильтрации:</label>
-            <input type="text" name="filter_column" id="filter_column" class="form-control">
+            <select name="filter_column" id="filter_column" class="form-control">
+                {% for column in columns %}
+                <option value="{{ column }}">{{ column }}</option>
+                {% endfor %}
+            </select>
         </div>
         <div class="form-group">
             <label for="filter_value">Значение для фильтрации:</label>
@@ -82,15 +89,11 @@
         </div>
         <div class="form-group">
             <label for="column_name">Столбец для агрегации:</label>
-            <input type="text" name="column_name" id="column_name" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="table2">Имя второй таблицы (для объединения):</label>
-            <input type="text" name="table2" id="table2" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="join_column">Столбец для объединения:</label>
-            <input type="text" name="join_column" id="join_column" class="form-control">
+            <select name="column_name" id="column_name" class="form-control">
+                {% for column in columns %}
+                <option value="{{ column }}">{{ column }}</option>
+                {% endfor %}
+            </select>
         </div>
         <input type="submit" value="Выполнить">
     </form>

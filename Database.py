@@ -85,12 +85,85 @@ class Database:
         query = f"SELECT column_name FROM information_schema.columns WHERE table_name='{table_name}';"
         return [column[0] for column in self.execute_query(query)]
 
+    reqvests = [
+        {"employee_shop": """SELECT * FROM get_employee_fullnames();"""},
+
+        {"shopcars": """SELECT
+                 sc.id AS ShopId,
+                 sc.address AS ShopAddress,
+                 r.region_name AS RegionName
+             FROM
+                 ShopCars sc
+             JOIN
+                 Region r ON sc.regionid = r.id;"""},
+
+        {"account": """SELECT
+                a.Id AS AccountId,
+                a.FullName,
+                a.Phone,
+                a.Login,
+                a.Password,
+                a.DateRegistration,
+                a.DateBirth,
+                r.region_name AS RegionName
+            FROM
+                Account a
+            INNER JOIN
+                Region r ON a.RegionId = r.id
+            ORDER BY
+                a.Id;"""},
+
+        {"car": """SELECT 
+                c.Id AS CarId,
+                c.Manufacturer,
+                c.Cost,
+                c.Credit,
+                r.region_name AS RegionName
+            FROM 
+                Car c
+            INNER JOIN 
+                Region r ON c.regionid = r.id;"""},
+
+        {"client": """SELECT * FROM get_client_fullnames();"""},
+
+        {"purchaseagreement": """SELECT 
+                pa.id AS PurchaseAgreementId,
+                c.FullName AS ClientFullName,
+                e.FullName AS AdminFullName,
+                pa.dateconclusion AS DateConclusion,
+                car.Manufacturer AS CarManufacturer,
+                sc.address AS ShopAddress
+            FROM 
+                PurchaseAgreement pa
+            JOIN 
+                (SELECT c.Id, a.FullName
+                 FROM Client c
+                 JOIN Account a ON c.AccountId = a.Id) AS c ON pa.clientid = c.Id
+            JOIN 
+                (SELECT es.Id, a.FullName
+                 FROM employee_shop es
+                 JOIN Account a ON es.AccountId = a.Id) AS e ON pa.adminid = e.Id
+            JOIN 
+                Car car ON pa.carid = car.Id
+            JOIN 
+                ShopCars sc ON pa.shopid = sc.id;"""}
+    ]
+
     def get_tables(self):
         tables = self.execute_query("SELECT table_name FROM information_schema.tables WHERE table_schema='public';")
         return [table[0] for table in tables]
 
+    def contains(self, reqvest, key):
+        return any(key in d for d in reqvest)
+
     def get_table_data(self, table_name):
-        data = self.execute_query(f"SELECT * FROM {table_name};")
+        if self.contains(self.reqvests, table_name):
+            for req in self.reqvests:
+                if table_name in req:
+                    data = self.execute_query(req[table_name])
+                    return data
+        else:
+            data = self.execute_query(f"SELECT * FROM {table_name};")
         return data
 
     def get_table_form(self, table_name):
@@ -100,8 +173,8 @@ class Database:
     def paginate(self, table_name, page, page_size):
         """Пагинация данных из таблицы."""
         offset = (page - 1) * page_size
-        query = f"SELECT * FROM {table_name} LIMIT %s OFFSET %s;"
-        return self.execute_query(query, (page_size, offset))
+        query = f"SELECT * FROM {table_name} LIMIT {page_size} OFFSET {offset};"
+        return self.execute_query(query)
 
     def sort_data(self, table_name, sort_column, ascending=True):
         """Сортировка данных из таблицы."""
@@ -122,9 +195,4 @@ class Database:
         else:
             query = f"SELECT {aggregate_function}({column_name}) FROM {table_name};"
 
-        return self.execute_query(query)
-
-    def join_tables(self, table1, table2, join_column):
-        """Объединение двух таблиц."""
-        query = f"SELECT * FROM {table1} INNER JOIN {table2} ON {table1}.{join_column} = {table2}.{join_column};"
         return self.execute_query(query)
